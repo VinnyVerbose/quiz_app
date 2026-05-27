@@ -1,0 +1,344 @@
+{
+  "title": "JavaScript var, let & const — Mastery Quiz",
+  "description": "A comprehensive quiz covering scope, hoisting, the temporal dead zone, reassignment, mutation, and best practices for JavaScript variable declarations.",
+  "totalQuestions": 20,
+  "questions": [
+    {
+      "id": 1,
+      "category": "Scope",
+      "difficulty": "beginner",
+      "type": "multiple_choice",
+      "question": "What type of scope does `var` use?",
+      "code": null,
+      "options": [
+        "Block scope",
+        "Function scope",
+        "Module scope",
+        "Global scope only"
+      ],
+      "correctAnswer": 1,
+      "explanation": "`var` is function-scoped, meaning it is accessible anywhere within the function it is declared in — including inside nested if blocks, for loops, or any other block within that function."
+    },
+    {
+      "id": 2,
+      "category": "Scope",
+      "difficulty": "beginner",
+      "type": "multiple_choice",
+      "question": "What type of scope do `let` and `const` use?",
+      "code": null,
+      "options": [
+        "Function scope",
+        "Global scope",
+        "Block scope",
+        "Lexical scope only"
+      ],
+      "correctAnswer": 2,
+      "explanation": "`let` and `const` are block-scoped. A block is any pair of curly braces `{}`, including if statements, for loops, while loops, and bare blocks."
+    },
+    {
+      "id": 3,
+      "category": "Scope",
+      "difficulty": "intermediate",
+      "type": "predict_output",
+      "question": "What does this code log to the console?",
+      "code": "function test() {\n  if (true) {\n    var x = 10;\n  }\n  console.log(x);\n}\ntest();",
+      "options": [
+        "ReferenceError: x is not defined",
+        "undefined",
+        "10",
+        "null"
+      ],
+      "correctAnswer": 2,
+      "explanation": "`var` is function-scoped, so `x` is accessible throughout the entire `test` function, even outside the `if` block where it was declared. It logs `10`."
+    },
+    {
+      "id": 4,
+      "category": "Scope",
+      "difficulty": "intermediate",
+      "type": "predict_output",
+      "question": "What does this code log to the console?",
+      "code": "function test() {\n  if (true) {\n    let x = 10;\n  }\n  console.log(x);\n}\ntest();",
+      "options": [
+        "10",
+        "undefined",
+        "null",
+        "ReferenceError: x is not defined"
+      ],
+      "correctAnswer": 3,
+      "explanation": "`let` is block-scoped. The variable `x` is confined to the `if` block's `{}` and is not accessible outside it. Attempting to access it throws a ReferenceError."
+    },
+    {
+      "id": 5,
+      "category": "Scope",
+      "difficulty": "advanced",
+      "type": "predict_output",
+      "question": "What does this code log?",
+      "code": "for (var i = 0; i < 3; i++) {\n  setTimeout(() => console.log(i), 0);\n}",
+      "options": [
+        "0, 1, 2",
+        "3, 3, 3",
+        "0, 0, 0",
+        "undefined, undefined, undefined"
+      ],
+      "correctAnswer": 1,
+      "explanation": "Because `var` is function-scoped, all three setTimeout callbacks share the same `i` variable. By the time they execute, the loop has finished and `i` is `3`. All three log `3`."
+    },
+    {
+      "id": 6,
+      "category": "Scope",
+      "difficulty": "advanced",
+      "type": "predict_output",
+      "question": "What does this code log?",
+      "code": "for (let i = 0; i < 3; i++) {\n  setTimeout(() => console.log(i), 0);\n}",
+      "options": [
+        "3, 3, 3",
+        "0, 0, 0",
+        "0, 1, 2",
+        "ReferenceError"
+      ],
+      "correctAnswer": 2,
+      "explanation": "`let` creates a new binding of `i` for each loop iteration. Each setTimeout callback captures its own independent copy of `i`, so they correctly log `0`, `1`, and `2`."
+    },
+    {
+      "id": 7,
+      "category": "Hoisting",
+      "difficulty": "beginner",
+      "type": "multiple_choice",
+      "question": "When a `var` declaration is hoisted, what value does the variable hold before its assignment line is reached?",
+      "code": null,
+      "options": [
+        "null",
+        "0",
+        "ReferenceError is thrown",
+        "undefined"
+      ],
+      "correctAnswer": 3,
+      "explanation": "`var` declarations are hoisted to the top of their function and automatically initialized to `undefined`. The assignment stays in place, so accessing a `var` before its assignment line gives `undefined`, not an error."
+    },
+    {
+      "id": 8,
+      "category": "Hoisting",
+      "difficulty": "intermediate",
+      "type": "predict_output",
+      "question": "What does this code log?",
+      "code": "console.log(x);\nvar x = 5;\nconsole.log(x);",
+      "options": [
+        "ReferenceError, then 5",
+        "undefined, then 5",
+        "5, then 5",
+        "undefined, then undefined"
+      ],
+      "correctAnswer": 1,
+      "explanation": "The `var x` declaration is hoisted to the top and initialized as `undefined`. The first `console.log` sees `undefined` because the assignment hasn't run yet. After `x = 5`, the second log shows `5`."
+    },
+    {
+      "id": 9,
+      "category": "Hoisting",
+      "difficulty": "intermediate",
+      "type": "multiple_choice",
+      "question": "Which of the following correctly describes how `let` is hoisted?",
+      "code": null,
+      "options": [
+        "It is not hoisted at all",
+        "It is hoisted and initialized to undefined",
+        "It is hoisted but not initialized — placed in the temporal dead zone",
+        "It is hoisted and initialized to null"
+      ],
+      "correctAnswer": 2,
+      "explanation": "`let` IS hoisted to the top of its block, but unlike `var`, it is NOT initialized. It sits in the temporal dead zone (TDZ) until the declaration line is reached. Accessing it before that line throws a ReferenceError."
+    },
+    {
+      "id": 10,
+      "category": "Hoisting",
+      "difficulty": "advanced",
+      "type": "predict_output",
+      "question": "What happens when this code runs?",
+      "code": "const obj = new MyClass();\nclass MyClass {\n  constructor() { this.x = 1; }\n}",
+      "options": [
+        "Works fine — class declarations are fully hoisted like function declarations",
+        "obj is undefined",
+        "ReferenceError: Cannot access 'MyClass' before initialization",
+        "TypeError: MyClass is not a constructor"
+      ],
+      "correctAnswer": 2,
+      "explanation": "Class declarations are subject to the temporal dead zone, just like `let` and `const`. Even though the class is hoisted, it cannot be accessed before its declaration line. This throws a ReferenceError."
+    },
+    {
+      "id": 11,
+      "category": "Temporal Dead Zone",
+      "difficulty": "intermediate",
+      "type": "multiple_choice",
+      "question": "What is the temporal dead zone (TDZ)?",
+      "code": null,
+      "options": [
+        "The time between two setTimeout calls",
+        "The period between when a let/const variable is hoisted and when its declaration line executes",
+        "A special scope created inside async functions",
+        "The gap between when a module loads and when it executes"
+      ],
+      "correctAnswer": 1,
+      "explanation": "The TDZ is the gap between the start of a block (where `let`/`const` is hoisted) and the line where it is declared. During this window, any access to the variable throws a ReferenceError."
+    },
+    {
+      "id": 12,
+      "category": "Temporal Dead Zone",
+      "difficulty": "advanced",
+      "type": "predict_output",
+      "question": "What does this code produce?",
+      "code": "{\n  console.log(a);\n  let a = 42;\n  console.log(a);\n}",
+      "options": [
+        "undefined, then 42",
+        "42, then 42",
+        "ReferenceError on the first console.log",
+        "null, then 42"
+      ],
+      "correctAnswer": 2,
+      "explanation": "Inside the block, `a` is hoisted but enters the TDZ immediately. The first `console.log(a)` executes before the `let a = 42` line, so `a` is in the TDZ and a ReferenceError is thrown."
+    },
+    {
+      "id": 13,
+      "category": "Reassignment & Mutation",
+      "difficulty": "beginner",
+      "type": "multiple_choice",
+      "question": "Which keyword(s) allow you to reassign a variable to a new value?",
+      "code": null,
+      "options": [
+        "Only var",
+        "Only let",
+        "var and let",
+        "var, let, and const"
+      ],
+      "correctAnswer": 2,
+      "explanation": "Both `var` and `let` allow reassignment. `const` does not — attempting to reassign a `const` variable throws a TypeError."
+    },
+    {
+      "id": 14,
+      "category": "Reassignment & Mutation",
+      "difficulty": "intermediate",
+      "type": "predict_output",
+      "question": "What does this code log?",
+      "code": "const arr = [1, 2, 3];\narr.push(4);\nconsole.log(arr);",
+      "options": [
+        "TypeError: Cannot modify a constant",
+        "[1, 2, 3]",
+        "[1, 2, 3, 4]",
+        "ReferenceError"
+      ],
+      "correctAnswer": 2,
+      "explanation": "`const` prevents reassignment of the binding, not mutation of the value. `arr` still points to the same array object — you just can't point `arr` at a different array. Mutating the array's contents with `.push()` works fine."
+    },
+    {
+      "id": 15,
+      "category": "Reassignment & Mutation",
+      "difficulty": "intermediate",
+      "type": "predict_output",
+      "question": "What happens here?",
+      "code": "const arr = [1, 2, 3];\narr = [4, 5, 6];\nconsole.log(arr);",
+      "options": [
+        "[4, 5, 6]",
+        "[1, 2, 3]",
+        "undefined",
+        "TypeError: Assignment to constant variable"
+      ],
+      "correctAnswer": 3,
+      "explanation": "This is reassignment — pointing `arr` at a completely new array. `const` prohibits this. The original mutation example (`.push()`) works because the binding itself doesn't change. Here, we try to change the binding, which throws a TypeError."
+    },
+    {
+      "id": 16,
+      "category": "Reassignment & Mutation",
+      "difficulty": "advanced",
+      "type": "multiple_choice",
+      "question": "You want an object that is truly immutable — its properties cannot be changed. What is the correct approach?",
+      "code": null,
+      "options": [
+        "Use const — it makes the object immutable",
+        "Use let with a type annotation",
+        "Use Object.freeze() in addition to const",
+        "There is no way to make a JavaScript object immutable"
+      ],
+      "correctAnswer": 2,
+      "explanation": "`const` only prevents reassigning the variable. To prevent mutation of the object's properties, you need `Object.freeze()`. Note: `freeze()` is shallow — nested objects inside a frozen object are still mutable."
+    },
+    {
+      "id": 17,
+      "category": "Global & Re-declaration",
+      "difficulty": "intermediate",
+      "type": "multiple_choice",
+      "question": "Which keyword attaches to the global `window` object when declared at the top level in a browser?",
+      "code": null,
+      "options": [
+        "let",
+        "const",
+        "var",
+        "All three"
+      ],
+      "correctAnswer": 2,
+      "explanation": "A `var` declared at the top level (outside any function) becomes a property of the global `window` object in browsers. `let` and `const` declared at the top level do NOT attach to `window` — they live in the script's own scope."
+    },
+    {
+      "id": 18,
+      "category": "Global & Re-declaration",
+      "difficulty": "intermediate",
+      "type": "predict_output",
+      "question": "What does this code do?",
+      "code": "let x = 1;\nlet x = 2;\nconsole.log(x);",
+      "options": [
+        "Logs 2",
+        "Logs 1",
+        "SyntaxError: Identifier 'x' has already been declared",
+        "TypeError"
+      ],
+      "correctAnswer": 2,
+      "explanation": "`let` does not allow re-declaration within the same scope. This is a SyntaxError that is caught before the code even runs. `var`, by contrast, would allow this silently."
+    },
+    {
+      "id": 19,
+      "category": "Best Practices",
+      "difficulty": "beginner",
+      "type": "multiple_choice",
+      "question": "What is the recommended default keyword to use when declaring variables in modern JavaScript?",
+      "code": null,
+      "options": [
+        "var — it's the most compatible",
+        "let — it's the most flexible",
+        "const — use unless you know you need to reassign",
+        "It doesn't matter; they all behave the same"
+      ],
+      "correctAnswer": 2,
+      "explanation": "The modern best practice is to default to `const`. It signals that the binding won't change, helps the JS engine optimize, and makes your intent clear. Switch to `let` only when you need to reassign. Avoid `var` in new code."
+    },
+    {
+      "id": 20,
+      "category": "Best Practices",
+      "difficulty": "advanced",
+      "type": "multiple_choice",
+      "question": "Why is the TDZ considered a feature rather than a bug?",
+      "code": null,
+      "options": [
+        "It makes code run faster by skipping initialization",
+        "It throws a clear error when you access a variable before declaration, instead of silently returning undefined like var does",
+        "It allows variables to be shared between modules",
+        "It prevents variables from being garbage collected too early"
+      ],
+      "correctAnswer": 1,
+      "explanation": "With `var`, accessing a variable before its declaration silently returns `undefined`, hiding bugs. The TDZ makes `let`/`const` throw a ReferenceError immediately, giving you a clear, actionable error that points directly to the problem."
+    }
+  ],
+  "categories": [
+    "Scope",
+    "Hoisting",
+    "Temporal Dead Zone",
+    "Reassignment & Mutation",
+    "Global & Re-declaration",
+    "Best Practices"
+  ],
+  "difficultyBreakdown": {
+    "beginner": 4,
+    "intermediate": 10,
+    "advanced": 6
+  },
+  "questionTypes": {
+    "multiple_choice": 12,
+    "predict_output": 8
+  }
+}
