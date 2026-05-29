@@ -20,13 +20,13 @@ function renderQuizTitle(title){
 }
 
 function renderQuestions(questions){
-    questions.forEach(question => {
+    questions.forEach((question, index) => {
 
         let code = question.code !== null ? question.code : '';
         let codeClass = question.code !== null ? 'code' : '';
 
         html += `
-                <div class="question">
+                <div class="question ${index === 0 ? "active" : ""}">
                     <div class="qDetails">
                         <span class="qNum">Q: ${question.id}</span><span class="category">${question.category}</span><span class="difficulty">${question.difficulty}</span>
                     </div>

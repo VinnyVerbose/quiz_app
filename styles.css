@@ -7,7 +7,7 @@
 }
 
 .question {
-    display: block;
+    display: none;
     border: 1px solid #000;
     margin: auto;
     padding: 10px;
@@ -16,6 +16,10 @@
     text-align: center;
     font-size: 2rem;
     font-family: sans-serif;
+}
+
+.question.active {
+  display: block;
 }
 
 .qDetails {
