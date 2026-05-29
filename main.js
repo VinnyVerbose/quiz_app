@@ -53,6 +53,7 @@ function renderAnswers(question){
                     return `<div class="answer" data-isCorrect="${isCorrect}">${answer}</div>`;
                 }).join('')}
             </div>
+            <button class="btnNext">Next</button>
         `
 }
 
@@ -66,7 +67,19 @@ function addEvents(){
             handleAnswerClick(event);
         })
     }
+
+    let btnNext = document.getElementsByClassName('btnNext');
+
+    for(let i = 0; i < btnNext.length; i++){
+        btnNext[i].addEventListener('click', ()=> {
+            btnNext[i].parentElement.classList.remove('active');
+            currentQuestion++;
+            document.getElementsByClassName('question')[currentQuestion].classList.add('active')
+        })
+    }
 }
+
+let currentQuestion = 0;
 
 function handleAnswerClick(event){
     let target = event.target;
@@ -87,4 +100,6 @@ function handleAnswerClick(event){
             }
         }
     }
+
+    target.parentElement.nextElementSibling.style.visibility = 'unset'
 }

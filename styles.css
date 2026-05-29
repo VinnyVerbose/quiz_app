@@ -63,6 +63,10 @@
     border: 2px solid #db3131;
 }
 
+.btnNext{
+    visibility: hidden;
+}
+
 .explanation p {
     display: none;
     font-size: 1.5rem;
