@@ -1,0 +1,6 @@
+TODO
+
+X--1. Align questions in center of screen so only 1 can be seen at a time while being mobile friendly
+X--2. Add next arrows on each question to scroll to next question
+X--2b. Fix logic to not bug out when end of questions is reached.
+3. State management ie. how many correct/incorrect, categories correct/incorrect, control flow for quesiton scroll

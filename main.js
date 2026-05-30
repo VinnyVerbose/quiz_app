@@ -73,13 +73,35 @@ function addEvents(){
     for(let i = 0; i < btnNext.length; i++){
         btnNext[i].addEventListener('click', ()=> {
             btnNext[i].parentElement.classList.remove('active');
-            currentQuestion++;
-            document.getElementsByClassName('question')[currentQuestion].classList.add('active')
+            // currentQuestion++;
+
+            if(handleNextQuestion()){
+                document.getElementsByClassName('question')[currentQuestion].classList.add('active')
+            } else{
+                finishQuiz();
+            }
+            
         })
     }
 }
 
-let currentQuestion = 0;
+let currentQuestion = 18;
+
+function handleNextQuestion(){
+    let numberOfQuestions = document.getElementsByClassName('question').length - 1;
+
+    if(currentQuestion + 1 > numberOfQuestions){
+        return false;
+    }
+
+    currentQuestion++
+    return true;
+}
+
+function finishQuiz(){
+    document.getElementById('app').style.display = 0;
+    document.getElementById('msgWrapper').classList.remove('hide');
+}
 
 function handleAnswerClick(event){
     let target = event.target;
