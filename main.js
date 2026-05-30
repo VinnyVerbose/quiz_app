@@ -1,7 +1,8 @@
 import data from './var_let_const_quiz.json' with {type: 'json'}
 
 // Create Main Title/Info
-
+let state = [];
+let currentQuestion = 18;
 let html = '';
 init()
 
@@ -47,7 +48,7 @@ function renderQuestions(questions){
 function renderAnswers(question){
     
     return `
-            <div class="answerWrapper">
+            <div class="answerWrapper" data-question-number="${question.id}" data-category="${question.category}">
                 ${question.options.map((answer, index) => {
                     let isCorrect = index === question.correctAnswer ? 'correct' : 'incorrect';
                     return `<div class="answer" data-isCorrect="${isCorrect}">${answer}</div>`;
@@ -73,8 +74,7 @@ function addEvents(){
     for(let i = 0; i < btnNext.length; i++){
         btnNext[i].addEventListener('click', ()=> {
             btnNext[i].parentElement.classList.remove('active');
-            // currentQuestion++;
-
+            
             if(handleNextQuestion()){
                 document.getElementsByClassName('question')[currentQuestion].classList.add('active')
             } else{
@@ -85,7 +85,7 @@ function addEvents(){
     }
 }
 
-let currentQuestion = 18;
+
 
 function handleNextQuestion(){
     let numberOfQuestions = document.getElementsByClassName('question').length - 1;
@@ -105,14 +105,17 @@ function finishQuiz(){
 
 function handleAnswerClick(event){
     let target = event.target;
+    
     if(target.classList.contains('answer') && target.dataset.iscorrect === 'correct'){
         target.classList.add('correct')    
         target.parentElement.style.pointerEvents = 'none';
+        updateState(target.parentElement, true);
         
     } else if(target.classList.contains('answer') && target.dataset.iscorrect === 'incorrect'){
         target.parentElement.style.pointerEvents = 'none';
         target.parentElement.previousElementSibling.children[1].style.display = 'block';
         let answerNodeArr = target.parentElement.children;
+        updateState(target.parentElement, false);
 
         for(let i = 0; i < answerNodeArr.length; i++){
             if(answerNodeArr[i].dataset.iscorrect === 'correct'){
@@ -121,6 +124,16 @@ function handleAnswerClick(event){
                 answerNodeArr[i].classList.add('incorrect');
             }
         }
+    }
+
+    function updateState(element, isCorrect){
+        console.log(element, element.dataset.questionNumber)
+        state.push({
+            questionNumber: element.dataset.questionNumber,
+            category: element.dataset.category,
+            isCorrect
+        })
+        console.log(state)
     }
 
     target.parentElement.nextElementSibling.style.visibility = 'unset'
