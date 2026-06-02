@@ -73,8 +73,9 @@ function renderAnswer(option, index){
 function renderThankyou(){
     let html = `
         <div id="thankYouWrapper">
-            <p>Thank you for completing the quiz<p>
+            <p>Thank you for completing the quiz</p>
             <p>You may now close this window</p>
+        </div>
     `
 
     app.innerHTML = html;
