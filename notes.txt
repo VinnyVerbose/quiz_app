@@ -4,8 +4,9 @@ X--1. Align questions in center of screen so only 1 can be seen at a time while 
 X--2. Add next arrows on each question to scroll to next question
 X--2b. Fix logic to not bug out when end of questions is reached.
 X--3. State management ie. how many correct/incorrect, categories correct/incorrect, control flow for quesiton scroll
-4. Get percentages for Results Screen
+x--4. Get percentages for Results Screen
 
-
+5. FIX: if find() ever returns nothing, question.category would break
+6. Add Back Button for "isReviewing"
 99. Refactor All
 100. Fix All Styling
