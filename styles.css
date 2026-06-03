@@ -79,7 +79,7 @@ span.qNum {
     font-style: oblique;
 }
 
-code.code {
+.code {
     font-size: 1.1rem;
     background: lightgrey;
     padding: 1rem;
