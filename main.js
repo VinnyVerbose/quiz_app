@@ -8,7 +8,9 @@ const state = {
     answerHistory: [],
     quizMode: "review",
     reviewFilter: null,
-    isReviewing: false
+    isReviewing: false,
+    reviewQuestionsIds: [],
+    reviewQuestionIndex: 0
 }
 
 init();
@@ -58,7 +60,17 @@ function renderWelcome(){
 }
 
 function renderQuestion(){
-    let q = data.questions[state.currentQuestionIndex];
+    let q = null;
+    if(state.isReviewing){
+        console.log('IS REVIEWING IF')
+        q = data.questions.find(question => {
+            return question.id === state.reviewQuestionsIds[state.reviewQuestionIndex];
+        })
+    } else {
+        q = data.questions[state.currentQuestionIndex];
+    }
+    
+    console.log("Q: ", q, state)
     let codeVisible = q.code ? '' : 'hide';
     let html = `
     <div id="question">
@@ -90,16 +102,20 @@ function renderAnswer(option, index){
 }
 
 function getAnswerClass(index){
-    let id = data.questions[state.currentQuestionIndex].id;
+    let id = null;
+    if(!state.isReviewing){
+        id = data.questions[state.currentQuestionIndex].id;
+    } else {
+        id = state.reviewQuestionsIds[state.reviewQuestionIndex];
+    }
+    
     
     let currentAnswer = state.answerHistory.find(answer => answer.questionId === id);
-    if(currentAnswer.isCorrect && currentAnswer.selectedAnswerIndex === index){
-            return "correct";
-        
-    } 
-    else if(currentAnswer.isCorrect){
-        return "";
-    } 
+
+
+    if(currentAnswer.isCorrect){
+        return currentAnswer.selectedAnswerIndex === index ? "correct" : "";
+    }
     else{
         if(index === data.questions[state.currentQuestionIndex].correctAnswer){
             return "correct";
@@ -184,7 +200,12 @@ function addReviewButtonEvents(){
     });
 
     document.getElementById("btnReviewIncorrect").addEventListener('click', () => {
+        state.isReviewing = true;
         state.reviewFilter = "incorrect";
+        state.screen = "question";
+        state.currentQuestionIndex = 0;
+        handleReviewIncorrect();
+        render();
     });
 }
 
@@ -271,6 +292,21 @@ function advanceQuiz(){
         state.currentQuestionIndex++;
     }
     render();
+}
+
+function handleReviewIncorrect(){
+    // getAnsweredQueestions
+    let incorrectQuestionIDArray = state.answerHistory.reduce((acc, answer) => {
+        
+        if(!answer.isCorrect){
+            acc.push(answer.questionId);
+        }
+        return acc;
+        
+    }, [])
+
+    state.reviewQuestionsIds = incorrectQuestionIDArray;
+    console.log('Inc State: ', state)
 }
 
 function advanceReview(){
