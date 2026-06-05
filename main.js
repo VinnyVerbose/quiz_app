@@ -80,9 +80,35 @@ function renderQuestion(){
 }
 
 function renderAnswer(option, index){
+    let style = "";
+    if(state.isReviewing){
+       style = getAnswerClass(index);
+    }
     return `
-        <button class="answer" data-answer-index="${index}">${option}</button>
+        <button class="answer ${style}" data-answer-index="${index}">${option}</button>
     `
+}
+
+function getAnswerClass(index){
+    let id = data.questions[state.currentQuestionIndex].id;
+    
+    let currentAnswer = state.answerHistory.find(answer => answer.questionId === id);
+    if(currentAnswer.isCorrect && currentAnswer.selectedAnswerIndex === index){
+            return "correct";
+        
+    } 
+    else if(currentAnswer.isCorrect){
+        return "";
+    } 
+    else{
+        if(index === data.questions[state.currentQuestionIndex].correctAnswer){
+            return "correct";
+        }
+        if(index === currentAnswer.selectedAnswerIndex){
+            return "incorrect";
+        }
+        return "";
+    }
 }
 
 function renderThankyou(){
@@ -153,7 +179,7 @@ function addReviewButtonEvents(){
         state.isReviewing = true;
         state.reviewFilter = "all";
         state.screen = "question";
-        state.currentQuestionIndex = 0;
+        state.currentQuestionIndex = 17;
         render();
     });
 
