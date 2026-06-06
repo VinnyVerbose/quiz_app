@@ -10,3 +10,123 @@ x--4. Get percentages for Results Screen
 6. Add Back Button for "isReviewing"
 99. Refactor All
 100. Fix All Styling
+
+Current Flow:
+
+APP START
+   ↓
+state.screen = "welcome"
+   ↓
+render()
+   ↓
+Welcome Screen
+   ↓
+Start clicked
+   ↓
+state.screen = "question"
+   ↓
+render()
+
+
+TAKING QUIZ
+   ↓
+renderQuestion()
+   ↓
+getCurrentQuestion()
+   ↓
+show question + answers
+   ↓
+answer clicked
+   ↓
+handleAnswerSelected()
+   ↓
+recordAnswer()
+   ↓
+if normal/review mode:
+      advanceQuiz()
+
+
+ADVANCE QUIZ
+   ↓
+Are there more questions?
+   ↓
+Yes → currentQuestionIndex++ → render()
+   ↓
+No
+   ↓
+if quizMode === "review"
+      screen = "results"
+else
+      screen = "thankYou"
+   ↓
+render()
+
+
+
+RESULTS SCREEN
+   ↓
+renderResults()
+   ↓
+getQuizResults()
+   ↓
+show:
+- overall score
+- category score
+- review buttons
+
+
+
+
+START REVIEW
+   ↓
+Review All / Review Incorrect clicked
+   ↓
+startReview(filter)
+   ↓
+isReviewing = true
+reviewFilter = filter
+reviewQuestionsIds = [...]
+reviewQuestionIndex = 0
+screen = "question"
+   ↓
+render()
+
+
+
+REVIEWING
+   ↓
+renderQuestion()
+   ↓
+getCurrentQuestion()
+   ↓
+uses:
+reviewQuestionsIds[reviewQuestionIndex]
+   ↓
+renderAnswer()
+   ↓
+getAnswerClass()
+   ↓
+show highlights
+   ↓
+Next clicked
+   ↓
+advanceReview()
+
+
+
+ADVANCE REVIEW
+   ↓
+More review questions?
+   ↓
+Yes → reviewQuestionIndex++ → render()
+   ↓
+No
+   ↓
+isReviewing = false
+reviewFilter = null
+screen = "results"
+   ↓
+render()
+
+
+

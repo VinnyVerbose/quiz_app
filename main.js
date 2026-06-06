@@ -9,7 +9,7 @@ const state = {
     quizMode: "review",
     reviewFilter: null,
     isReviewing: false,
-    reviewQuestionsIds: [],
+    reviewQuestionIds: [],
     reviewQuestionIndex: 0
 }
 
@@ -60,15 +60,16 @@ function renderWelcome(){
 }
 
 function renderQuestion(){
-    let q = null;
-    if(state.isReviewing){
-        console.log('IS REVIEWING IF')
-        q = data.questions.find(question => {
-            return question.id === state.reviewQuestionsIds[state.reviewQuestionIndex];
-        })
-    } else {
-        q = data.questions[state.currentQuestionIndex];
-    }
+    let q = getCurrentQuestion();
+    
+    // if(state.isReviewing){
+    //     console.log('IS REVIEWING IF')
+    //     q = data.questions.find(question => {
+    //         return question.id === state.reviewQuestionIds[state.reviewQuestionIndex];
+    //     })
+    // } else {
+    //     q = data.questions[state.currentQuestionIndex];
+    // }
     
     console.log("Q: ", q, state)
     let codeVisible = q.code ? '' : 'hide';
@@ -102,29 +103,24 @@ function renderAnswer(option, index){
 }
 
 function getAnswerClass(index){
-    let id = null;
-    if(!state.isReviewing){
-        id = data.questions[state.currentQuestionIndex].id;
-    } else {
-        id = state.reviewQuestionsIds[state.reviewQuestionIndex];
-    }
-    
-    
-    let currentAnswer = state.answerHistory.find(answer => answer.questionId === id);
-
+    let q = getCurrentQuestion();
+    let currentAnswer = state.answerHistory.find(answer => {
+        return answer.questionId === q.id;
+    });
 
     if(currentAnswer.isCorrect){
         return currentAnswer.selectedAnswerIndex === index ? "correct" : "";
     }
-    else{
-        if(index === data.questions[state.currentQuestionIndex].correctAnswer){
-            return "correct";
-        }
-        if(index === currentAnswer.selectedAnswerIndex){
-            return "incorrect";
-        }
-        return "";
+
+    if(index === q.correctAnswer){
+        return "correct";
     }
+
+    if(index === currentAnswer.selectedAnswerIndex){
+        return "incorrect";
+    }
+
+    return "";
 }
 
 function renderThankyou(){
@@ -192,21 +188,40 @@ function addAnswerEvents(){
 
 function addReviewButtonEvents(){
     document.getElementById("btnReviewAll").addEventListener('click', () => {
-        state.isReviewing = true;
-        state.reviewFilter = "all";
-        state.screen = "question";
-        state.currentQuestionIndex = 17;
-        render();
+        startReview('all');
     });
 
     document.getElementById("btnReviewIncorrect").addEventListener('click', () => {
-        state.isReviewing = true;
-        state.reviewFilter = "incorrect";
-        state.screen = "question";
-        state.currentQuestionIndex = 0;
-        handleReviewIncorrect();
-        render();
+        startReview('incorrect')
     });
+}
+
+function startReview(filter){
+    state.isReviewing = true;
+        state.reviewFilter = `${filter}`;
+        state.reviewQuestionIndex = 0;
+        state.screen = "question";
+
+        if(filter === 'all'){
+            let questionIDs = state.answerHistory.map(answer => {
+            return answer.questionId;
+        });
+
+            state.reviewQuestionIds = questionIDs;
+        }
+
+        else if(filter === 'incorrect'){
+            let incorrectQuestionIDArray = state.answerHistory.reduce((acc, answer) => {
+                
+                if(!answer.isCorrect){
+                    acc.push(answer.questionId);
+                }
+                return acc;
+                
+            }, [])
+            state.reviewQuestionIds = incorrectQuestionIDArray;
+        }
+        render();
 }
 
 function addNextButtonEvent(){
@@ -219,6 +234,18 @@ function addNextButtonEvent(){
 }
 
 // Business Logic===============================
+
+function getCurrentQuestion(){
+    if(state.isReviewing){
+        let reviewQuestionId = state.reviewQuestionIds[state.reviewQuestionIndex];
+
+        return data.questions.find(question => {
+            return question.id === reviewQuestionId;
+        });
+    }
+
+    return data.questions[state.currentQuestionIndex];
+}
 
 function handleAnswerSelected(index){
     if(!state.isReviewing){
@@ -294,28 +321,14 @@ function advanceQuiz(){
     render();
 }
 
-function handleReviewIncorrect(){
-    // getAnsweredQueestions
-    let incorrectQuestionIDArray = state.answerHistory.reduce((acc, answer) => {
-        
-        if(!answer.isCorrect){
-            acc.push(answer.questionId);
-        }
-        return acc;
-        
-    }, [])
-
-    state.reviewQuestionsIds = incorrectQuestionIDArray;
-    console.log('Inc State: ', state)
-}
-
 function advanceReview(){
-    if(state.currentQuestionIndex >= data.questions.length - 1){
+    if(state.reviewQuestionIndex >= state.reviewQuestionIds.length - 1){
         state.reviewFilter = null;
         state.screen = "results";
         state.isReviewing = false;
+        state.reviewQuestionIndex = 0;
     }else{
-        state.currentQuestionIndex++;
+        state.reviewQuestionIndex++;
     }
     render();    
 }
