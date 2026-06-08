@@ -64,22 +64,12 @@ function renderWelcome(){
 function renderQuestion(){
     let q = getCurrentQuestion();
     
-    // if(state.isReviewing){
-    //     console.log('IS REVIEWING IF')
-    //     q = data.questions.find(question => {
-    //         return question.id === state.reviewQuestionIds[state.reviewQuestionIndex];
-    //     })
-    // } else {
-    //     q = data.questions[state.currentQuestionIndex];
-    // }
-    
-    console.log("Q: ", q, state)
     let codeVisible = q.code ? '' : 'hide';
     let html = `
     <div id="question">
         <span class="qText">${q.question}</span>
         <div class="code ${codeVisible}"><p>${q.code}</p></div>
-        <div class="explanation "><p>${q.explanation}</p></div>
+        ${state.isReviewing || state.quizMode === 'interactive' ? `<div class="explanation "><p>${q.explanation}</p></div>` : ""}
         <div class="answersWrapper">
             ${q.options.map((option, index) => {
                 return renderAnswer(option, index);
