@@ -10,12 +10,14 @@ const state = {
     reviewFilter: null,
     isReviewing: false,
     reviewQuestionIds: [],
-    reviewQuestionIndex: 0
+    reviewQuestionIndex: 0,
+    message: null
 }
 
 init();
 
 function init(){
+    addMessageButtonEvent();
     render();
 }
 
@@ -196,34 +198,6 @@ function addReviewButtonEvents(){
     });
 }
 
-function startReview(filter){
-    state.isReviewing = true;
-        state.reviewFilter = `${filter}`;
-        state.reviewQuestionIndex = 0;
-        state.screen = "question";
-
-        if(filter === 'all'){
-            let questionIDs = state.answerHistory.map(answer => {
-            return answer.questionId;
-        });
-
-            state.reviewQuestionIds = questionIDs;
-        }
-
-        else if(filter === 'incorrect'){
-            let incorrectQuestionIDArray = state.answerHistory.reduce((acc, answer) => {
-                
-                if(!answer.isCorrect){
-                    acc.push(answer.questionId);
-                }
-                return acc;
-                
-            }, [])
-            state.reviewQuestionIds = incorrectQuestionIDArray;
-        }
-        render();
-}
-
 function addNextButtonEvent(){
     if(state.isReviewing){
         document.getElementById("btnNext").addEventListener('click', () => {
@@ -233,7 +207,21 @@ function addNextButtonEvent(){
     }
 }
 
+function addMessageButtonEvent(){
+    document.getElementById("btnMessageOk").addEventListener('click', () => {
+        console.log('OK')
+        let messageWrapper = document.getElementById("messageWrapper");
+        messageWrapper.classList.add('hide');
+    })
+}
+
 // Business Logic===============================
+
+function showMessage(message){
+    let messageWrapper = document.getElementById("messageWrapper");
+    messageWrapper.querySelector('p').innerText = message;
+    messageWrapper.classList.remove('hide');
+}
 
 function getCurrentQuestion(){
     if(state.isReviewing){
@@ -331,4 +319,46 @@ function advanceReview(){
         state.reviewQuestionIndex++;
     }
     render();    
+}
+
+function startReview(filter){
+    let reviewQuestionIds = buildReviewQuestionIds(filter);
+
+    if(reviewQuestionIds.length === 0){
+        state.message = 'No Questions to Review';
+        showMessage(state.message);
+        return;
+    }
+
+    state.reviewQuestionIds = reviewQuestionIds;
+    state.isReviewing = true;
+    state.reviewFilter = `${filter}`;
+    state.reviewQuestionIndex = 0;
+    state.screen = "question";
+    
+    render();
+
+    
+}
+
+function buildReviewQuestionIds(filter){
+    if(filter === 'all'){
+        let questionIDs = state.answerHistory.map(answer => {
+        return answer.questionId;
+    });
+
+        return questionIDs;
+    }
+
+    else if(filter === 'incorrect'){
+        let incorrectQuestionIDArray = state.answerHistory.reduce((acc, answer) => {
+            
+            if(!answer.isCorrect){
+                acc.push(answer.questionId);
+            }
+            return acc;
+            
+        }, [])
+        return incorrectQuestionIDArray;
+    }
 }
