@@ -6,12 +6,13 @@ const state = {
     screen: "welcome",
     currentQuestionIndex: 17,
     answerHistory: [],
-    quizMode: "review",
+    quizMode: "interactive",
     reviewFilter: null,
     isReviewing: false,
     reviewQuestionIds: [],
     reviewQuestionIndex: 0,
-    message: null
+    message: null,
+    hasAnswered: false
 }
 
 init();
@@ -69,14 +70,15 @@ function renderQuestion(){
     <div id="question">
         <span class="qText">${q.question}</span>
         <div class="code ${codeVisible}"><p>${q.code}</p></div>
-        ${state.isReviewing || state.quizMode === 'interactive' ? `<div class="explanation "><p>${q.explanation}</p></div>` : ""}
+        ${state.isReviewing || (state.quizMode === "interactive" && state.hasAnswered) ? `<div class="explanation "><p>${q.explanation}</p></div>` : ""}
         <div class="answersWrapper">
             ${q.options.map((option, index) => {
                 return renderAnswer(option, index);
             }).join('')}
         </div>
         <div id="btnNextWrapper">
-            ${state.isReviewing ? '<button id="btnNext">Next</button>' : ''}
+            ${state.isReviewing || (state.quizMode === "interactive" && state.hasAnswered) ? '<button id="btnNext">Next</button>' : ''}
+            
         </div>
     </div>
     `
@@ -86,7 +88,7 @@ function renderQuestion(){
 
 function renderAnswer(option, index){
     let style = "";
-    if(state.isReviewing){
+    if(state.isReviewing || (state.quizMode === "interactive" && state.hasAnswered)){
        style = getAnswerClass(index);
     }
     return `
@@ -189,10 +191,15 @@ function addReviewButtonEvents(){
 }
 
 function addNextButtonEvent(){
-    if(state.isReviewing){
+    console.log(state)
+    if(state.isReviewing || (state.quizMode === "interactive" && state.hasAnswered)){
         document.getElementById("btnNext").addEventListener('click', () => {
-            console.log('clicked next')
-            advanceReview();
+            if(state.isReviewing){
+                advanceReview();
+            }else if(state.quizMode === "interactive" && state.hasAnswered){
+                state.hasAnswered = false;
+                advanceQuiz();
+            }
         })
     }
 }
@@ -226,12 +233,19 @@ function getCurrentQuestion(){
 }
 
 function handleAnswerSelected(index){
-    if(!state.isReviewing){
+    if(!state.isReviewing && !state.hasAnswered){
         recordAnswer(index);
         if(state.quizMode === "normal" || state.quizMode === "review"){
             advanceQuiz();
+        } else if(state.quizMode === "interactive"){
+            handleInteractiveAnswerSelected();
         }
     }
+}
+
+function handleInteractiveAnswerSelected(){
+    state.hasAnswered = true;
+    render();
 }
 
 function recordAnswer(index){
@@ -285,6 +299,10 @@ function advanceQuiz(){
         switch(state.quizMode){
             
             case "review":
+                state.screen = "results";
+                break;
+
+            case "interactive":
                 state.screen = "results";
                 break;
 
